@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính Dame Theo Cấp CH</title>
+    <style>
+        /* Giao diện nền sáng phong cách kiếm hiệp/võ lâm */
+        body {
+            background-color: #1a0f00;
+            color: #d4b26f;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        h2 {
+            text-align: center;
+            color: #ffcc66;
+            border-bottom: 1px solid #443311;
+            padding-bottom: 10px;
+        }
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .input-box {
+            width: 45%;
+        }
+        label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        input {
+            width: 100%;
+            background-color: #2a1a08;
+            border: 1px solid #553311;
+            color: #fff;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        /* Bảng hiển thị kết quả */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #443311;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #2a1a08;
+            font-size: 13px;
+        }
+        .cap-col { color: #ff5555; font-weight: bold; }
+        .dame-col { color: #ffffff; }
+        .heso-col { color: #ffcc66; }
+    </style>
+</head>
+<body>
+
+    <h2>⚔️ Tính Dame Theo Cấp CH</h2>
+    
+    <div class="input-group">
+        <div class="input-box">
+            <label>Dame Gốc Min</label>
+            <input type="number" id="dameMin" value="216" oninput="tinhDame()">
+        </div>
+        <div class="input-box">
+            <label>Dame Gốc Max</label>
+            <input type="number" id="dameMax" value="448" oninput="tinhDame()">
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>CẤP</th>
+                <th>DAME</th>
+                <th>HỆ SỐ</th>
+            </tr>
+        </thead>
+        <tbody id="resultTable">
+            <!-- Dữ liệu sẽ tự động điền vào đây bằng Javascript -->
+        </tbody>
+    </table>
+
+    <script>
+        // Cấu hình các cấp cộng và tỷ lệ phần trăm tăng thêm tương ứng như trong ảnh
+        const config = [
+            { cap: "Gốc", phanTram: 0 },
+            { cap: "+1", phanTram: 1 },
+            { cap: "+2", phanTram: 1 },
+            { cap: "+3", phanTram: 3 },
+            { cap: "+4", phanTram: 4 },
+            { cap: "+5", phanTram: 5 },{ cap: "+6", phanTram: 6 },
+            { cap: "+7", phanTram: 10 }
+        ];
+
+        function tinhDame() {
+            const minGoc = parseInt(document.getElementById("dameMin").value) || 0;
+            const maxGoc = parseInt(document.getElementById("dameMax").value) || 0;
+            const tbody = document.getElementById("resultTable");
+            
+            let html = "";
+            let currentMin = minGoc;
+            let currentMax = maxGoc;
+
+            config.forEach((item, index) => {
+                if (index > 0) {
+                    // Công thức cộng dồn dame theo từng cấp
+                    currentMin = Math.round(currentMin * (1 + item.phanTram / 100));
+                    currentMax = Math.round(currentMax * (1 + item.phanTram / 100));
+                }
+
+                html += `
+                    <tr>
+                        <td class="cap-col">${item.cap}</td>
+                        <td class="dame-col">${currentMin} - ${currentMax}</td>
+                        <td class="heso-col">${item.phanTram > 0 ? '+' + item.phanTram + '%' : '-'}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // Chạy hàm tính toán lần đầu khi vừa tải trang
+        tinhDame();
+    </script>
+</body>
+</html>
